@@ -9,12 +9,18 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    permissions:  # 👈 REQUIRED for Azure OIDC authentication
+      id-token: write
+      contents: read
+
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up Azure CLI
-        uses: azure/setup-kubectl@v3
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v1
+        with:
+          version: 'latest'  # You can specify a version if needed
 
       - name: Authenticate with Azure
         uses: azure/login@v1
@@ -24,7 +30,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Get AKS Credentials
-        run: az aks get-credentials --resource-group YOUR_RESOURCE_GROUP --name YOUR_AKS_CLUSTER_NAME
+        run: az aks get-credentials --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }} --overwrite-existing
 
       - name: Deploy Nginx to AKS
         run: kubectl apply -f k8s-manifests/nginx-deployment.yml
