@@ -31,7 +31,7 @@ jobs:
           allow-no-subscriptions: true
 
       - name: Get AKS Credentials
-        run: az aks get-credentials --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }} --overwrite-existing
+        run: az aks get-credentials --resource-group devops-rg --name devops-aks --overwrite-existing
 
       - name: Deploy Nginx to AKS
         run: kubectl apply -f k8s-manifests/nginx-deployment.yml
